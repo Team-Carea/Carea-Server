@@ -6,6 +6,21 @@ import logging
 def test_page(request):
     return render(request, 'posts/test_page.html')
 
+
+# 카테고리별 게시물 목록을 가져오기 위한 클래스 생성
+class category_list:
+    def get_category(self, category):
+        # DB에서 카테고리를 기준으로 값을 가져온다.
+        lists = Post.objects.filter(category=category)
+        # category 값이 latest, 즉 최신글인 경우 모든 게시물을 가져온다.
+        if(category == 'latest') :
+            lists = Post.objects.all()
+        return lists
+def view_category(request, category) :
+    category_instance = category_list()
+    category_value = category_instance.get_category(category)
+    return render(request, 'category_select.html', {'category': category_value})
+
 def create(request):
     if(request.method == 'POST') :
         title = request.POST['title']
