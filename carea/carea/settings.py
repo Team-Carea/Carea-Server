@@ -36,7 +36,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
-SITE_ID = 1
+SITE_ID = 2
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -72,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'carea.urls'
@@ -129,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'ko-kr'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Seoul'
 
@@ -149,7 +150,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.accounts.auth_backends.AuthenticationBackend'
+    'allauth.account.auth_backends.AuthenticationBackend'
 )
 
 LOGIN_REDIRECT_URL = '/'
