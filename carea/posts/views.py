@@ -1,7 +1,6 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import *
-import logging
+from django.shortcuts import render
+from .models import Post
+from users.models import User
 # Create your views here.
 def test_page(request):
     return render(request, 'posts/test_page.html')
