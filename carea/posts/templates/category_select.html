@@ -10,17 +10,16 @@
 </head>
 <body>
 
-<h2>선택한 카테고리: {{ category_value }}</h2>
+    <h2>선택한 카테고리: {{ g_category_value }}</h2>
 
-{% for post in category %}
-    <div class = "post">
-        <h3>{{ post.title }}</h3>
-        <p>{{ post.content }}</p>
-        <p>{{ post.created_at }}</p>
-        <p>{{ post.updated_at }}</p>
-        <p>{{ post.user_id }}</p>
-    </div>
-{% endfor %}
-
+    {% for post in category %}
+        <a href="/posts/{{post.id}}">
+        <div class = "post">
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            <p>{{ post.user.nickname }}</p>
+            <p>{{ post.created_at }}</p>
+        </div>
+    {% endfor %}
 </body>
 </html>
