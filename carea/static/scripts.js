@@ -28,22 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sortedIds = [currentUserId, visitorUserId].sort();
 
-        /*const response = await fetch('http://127.0.0.1:8000/chats/rooms/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                helped: sortedIds[0],
-                helper: sortedIds[1],
-                help: 1
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }*/
-
         currentRoomId = 1;
 
         const response = await fetch(`http://127.0.0.1:8000/chats/${currentRoomId}/messages`, {
@@ -90,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = JSON.parse(event.data);
             const messageElem = document.createElement('div');
             messageElem.classList.add('message-bubble');
-            messageElem.textContent = `${data.sender_id}: ${data.message}`;
+            messageElem.textContent = `${data.user_id}: ${data.message}`;
 
-            if (data.sender_id === currentUserId) {
+            if (data.user_id === currentUserId) {
                 messageElem.classList.add('sent');
             } else {
                 messageElem.classList.add('received');
@@ -107,11 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const message = messageInput.value;
         if (message) {
             const messagePayload = {
-                'sender_id': user_id,
+                'user_id': user_id,
                 'message': message,
-                'helped_id': sortedIds[0],
-                'helper_id': sortedIds[1],
-                'help_id': 1,
             };
 
             socket.send(JSON.stringify(messagePayload));
