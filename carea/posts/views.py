@@ -1,9 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Post
 from users.models import User
 # Create your views here.
-def test_page(request):
-    return render(request, 'posts/test_page.html')
 
 
 # 카테고리별 게시물 목록을 가져오기 위한 클래스 생성
@@ -20,26 +18,28 @@ def view_category(request, category) :
     category_value = category_instance.get_category(category)
     return render(request, 'category_select.html', {'category': category_value})
 
-def create(request):
-    if(request.method == 'POST') :
-        title = request.POST['title']
-        content = request.POST['content']
-        category = request.POST['category']
-        #user = request.user
+# 게시물 작성을 위한 클래스 생성
+class PostInfo:
+    def get(self, request):
+        return render(request, 'post.html')
 
-        # 특정 User의 ID가 1인 경우를 가정
-        user_id_to_find = 1
-
-        # 해당 User를 참조하는 MyModel 인스턴스들을 가져오는 쿼리셋
-        user_info = User.objects.get(id=user_id_to_find)
-
-        print(f"Title: {title}, Content: {content}, Category: {category},"
-              f"user_id_to_find: {user_id_to_find}, post_ids: {user_info}")
-
-        post = Post(
-            title = title,
-            content = content,
-            category = category,
-            user = user_info
+    def post(self, request):
+        # 임의로 user_id를 3로 설정
+        user_id = 3
+        Post.objects.create(
+            title=request.POST.get('title'),
+            content=request.POST.get('content'),
+            category=request.POST.get('category'),
+            user=User.objects.get(id=user_id)
         )
-        post.save()
+
+def write_post(request):
+    post_instance = PostInfo()
+    if request.method == "POST":
+        post_instance.post(request)
+        # 이전 페이지로 돌아갈 때 필요한 category 정보 가져오기
+        previous_category = request.POST.get('category')
+        # 이전 페이지(카테고리 목록)로 돌아가기
+        return view_category(request, previous_category)
+    else:
+        return post_instance.get(request)
