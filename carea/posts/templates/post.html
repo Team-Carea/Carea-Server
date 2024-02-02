@@ -1,0 +1,27 @@
+<!-- 수정된 HTML 코드 -->
+<html>
+  <body>
+    <div class="title">
+      <form method="POST" action=''>
+        {% csrf_token %}
+
+        <label for="title">제목</label>
+        <input type="text" name="title" id="title" placeholder="제목입력">
+
+        <label for="category">카테고리 선택</label>
+        <select id="category" name="category">
+          <option value="economic">경제/금융</option>
+          <option value="future">진로</option>
+          <option value="life">생활</option>
+          <option value="free">자유</option>
+        </select>
+
+        <div class="contents">
+          <label for="content">내용</label>
+          <textarea name="content" id="content" placeholder="내용입력"></textarea>
+          <input type="submit" value="제출">
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
