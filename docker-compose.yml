@@ -1,5 +1,11 @@
 version: '3'
 services:
+  redis:
+    image: redis:6
+    container_name: redis
+    ports:
+      - 6379:6379
+
   web:
     image: django:5.0.1
     container_name: django
