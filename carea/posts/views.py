@@ -10,7 +10,7 @@ class CategoryInfo:
     # 카테고리 내 모든 게시물
     def get_category_list(self, category):
         # DB에서 카테고리를 기준으로 값을 가져온다.
-        lists = Post.objects.filter(category=category)
+        lists = Post.objects.filter(category=category).order_by('-created_at')
         # category 값이 latest, 즉 최신글인 경우 모든 게시물을 가져온다.
         if(category == 'latest') :
             lists = Post.objects.all().order_by('-created_at')
