@@ -12,7 +12,7 @@ class category_list:
         lists = Post.objects.filter(category=category)
         # category 값이 latest, 즉 최신글인 경우 모든 게시물을 가져온다.
         if(category == 'latest') :
-            lists = Post.objects.all()
+            lists = Post.objects.all().order_by('-created_at')
         return lists
 
     # 카테고리 단일 값
