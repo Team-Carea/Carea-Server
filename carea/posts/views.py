@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .models import Post
 from users.models import User
 # Create your views here.
 
 
-# 카테고리별 게시물 목록을 가져오기 위한 클래스 생성
-class category_list:
+# 카테고리 별 게시물 목록과 카테고리 값 자체를 가져오기 위한 클래스
+class CategoryInfo:
+
     # 카테고리 내 모든 게시물
     def get_category_list(self, category):
         # DB에서 카테고리를 기준으로 값을 가져온다.
@@ -20,18 +21,21 @@ class category_list:
         return category
 
 def view_category(request, category) :
-    category_instance = category_list()
+    category_instance = CategoryInfo()
     category_posts = category_instance.get_category_list(category)
-    global category_value
-    category_value = category_instance.get_category_value(category)
-    return render(request, 'category_select.html', {'category' : category_posts, 'category_value': category_value})
+    # 게시물 작성 페이지에서 카테고리 목록 페이지로 돌아오기 위함
+    global g_category_value
+    g_category_value = category_instance.get_category_value(category)
+    return render(request, 'category_select.html', {'category': category_posts, 'category_value': g_category_value})
 
 # 게시물 작성을 위한 클래스 생성
 class PostInfo:
-    def get(self, request):
+    # 게시물 작성 페이지 출력
+    def view_write_page(self, request):
         return render(request, 'post.html')
 
-    def post(self, request):
+    # 게시물 정보를 DB에 저장
+    def save_post_info(self, request):
         # 임의로 user_id를 3로 설정
         user_id = 3
         Post.objects.create(
@@ -44,8 +48,8 @@ class PostInfo:
 def write_post(request):
     post_instance = PostInfo()
     if request.method == "POST":
-        post_instance.post(request)
+        post_instance.save_post_info(request)
         # 이전 페이지로 돌아가기
-        return view_category(request, category_value)
+        return view_category(request, g_category_value)
     else:
-        return post_instance.get(request)
+        return post_instance.view_write_page(request)
