@@ -30,7 +30,7 @@ def view_category(request, category) :
     return render(request, 'category_select.html', {'category': category_posts, 'g_category_value': g_category_value})
 
 # 게시물 작성을 위한 클래스 생성
-class Write:
+class WritePost:
     # 게시물 작성 페이지 출력
     def view_write_page(self, request):
         return render(request, 'post.html')
@@ -47,7 +47,7 @@ class Write:
         )
 
 def write_post(request):
-    post_instance = Write()
+    post_instance = WritePost()
     if request.method == "POST":
         post_instance.save_post_info(request)
         # 이전 페이지로 돌아가기
