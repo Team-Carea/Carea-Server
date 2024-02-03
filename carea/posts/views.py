@@ -27,7 +27,7 @@ def view_category(request, category) :
     # 게시물 작성 페이지에서 카테고리 목록 페이지로 돌아오기 위함
     global g_category_value
     g_category_value = category_instance.get_category_value(category)
-    return render(request, 'category_select.html', {'category': category_posts, 'category_value': g_category_value})
+    return render(request, 'category_select.html', {'category': category_posts, 'g_category_value': g_category_value})
 
 # 게시물 작성을 위한 클래스 생성
 class Write:
@@ -54,3 +54,15 @@ def write_post(request):
         return view_category(request, g_category_value)
     else:
         return post_instance.view_write_page(request)
+    # 게시물 상세 보기 기능을 위한 클래스
+class PostDetail:
+    # 게시물의 포스트 아이디 받아오기
+    def get_post_info(self, pk):
+        detail_info = get_object_or_404(Post, id=pk)
+        return detail_info
+
+# 포스트 아이디를 통해 게시물의 상세정보 전달
+def view_detail(request, post_id):
+    detail_instance = PostDetail()
+    post_detail = detail_instance.get_post_info(post_id)
+    return render(request, 'post_detail.html', {'detail': post_detail})
