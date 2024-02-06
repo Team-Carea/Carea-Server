@@ -14,20 +14,23 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
-from chats.routing import websocket_urlpatterns
+from chats.routing import websocket_chats_urlpatterns
+from helps.routing import websocket_helps_urlpatterns
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "carea.settings")
 # Initialize Django ASGI application early to ensure the AppRegistry
 # is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
 
-import chats.routing
-
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
         "websocket": AllowedHostsOriginValidator(
-            AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
+            AuthMiddlewareStack(
+                URLRouter(
+                    websocket_chats_urlpatterns + websocket_helps_urlpatterns
+                )
+            ),
         ),
     }
 )
