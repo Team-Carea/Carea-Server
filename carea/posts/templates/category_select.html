@@ -1,0 +1,25 @@
+<!-- templates/category_select.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카테고리 선택</title>
+
+    <a href="{% url "write_post" %}">게시물 작성하기</a>
+</head>
+<body>
+
+    <h2>선택한 카테고리: {{ g_category_value }}</h2>
+
+    {% for post in category %}
+        <a href="/posts/{{post.id}}">
+        <div class = "post">
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            <p>{{ post.user.nickname }}</p>
+            <p>{{ post.created_at }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>
