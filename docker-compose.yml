@@ -15,5 +15,5 @@ services:
     ports:
       - 8000:8000
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=./carea/carea/carea-project-5ba12d932822.json
+      - GOOGLE_APPLICATION_CREDENTIALS=carea-project-5ba12d932822.json
     command: sh -c "python ./carea/manage.py runserver 0.0.0.0:8000"

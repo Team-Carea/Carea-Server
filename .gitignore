@@ -96,3 +96,6 @@ venv.bak/
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
+
+# Google Cloud account
+carea-project-5ba12d932822.json
