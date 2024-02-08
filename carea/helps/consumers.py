@@ -113,7 +113,6 @@ class HelpConsumer(AsyncWebsocketConsumer):
     async def perform_stt(self, bytes_data):
         client = speech.SpeechClient()
 
-        # content 쓰면 맞는지 확인 필요
         audio = speech.RecognitionAudio(content=bytes_data)
         config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
