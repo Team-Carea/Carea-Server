@@ -1,38 +1,41 @@
 from rest_framework import serializers
 
 from .models import Chat, ChatRoom
+from users.models import User
 
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
-        fields = '__all__'
+        fields = ('id', 'message', 'created_at', 'user')
+
+# 채팅방에 유저 정보를 붙이기 위한 시리얼라이저
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'nickname', 'profile_url')
 
 class ChatRoomSerializer(serializers.ModelSerializer):
-    latest_message = serializers.SerializerMethodField()  # 최신 메시지 필드를 동적으로 가져옵니다.
-    # opponent_id = serializers.SerializerMethodField()  # 상대방 id 필드를 동적으로 가져옵니다.
-    # opponent_nickname
-    # opponent_profile_url
-    # 오히려 나중엔 helped, helper 안 넣을 수도
+    # 동적으로 가져올 필드들
+    latest_message = serializers.SerializerMethodField()
+    opponent = serializers.SerializerMethodField()
+
     class Meta:
-        model = ChatRoom  # ChatRoom 모델을 기반으로 합니다.
-        # 시리얼라이즈할 필드들을 지정합니다.
-        fields = ('id', 'help', 'helped', 'helper', 'latest_message')
+        model = ChatRoom
+        fields = ('id', 'help', 'latest_message', 'opponent')
 
-    # 최신 메시지를 가져오는 메소드입니다.
+    # 최신 메시지를 가져오는 메소드
     def get_latest_message(self, obj):
-        latest_msg = Chat.objects.filter(room=obj).order_by('-created_at').first()  # 최신 메시지를 조회합니다.
+        latest_msg = Chat.objects.filter(room=obj).order_by('-created_at').first()
         if latest_msg:
-            return latest_msg.message  # 최신 메시지의 내용을 반환합니다.
-        return None  # 메시지가 없다면 None을 반환합니다.
+            return latest_msg.message
+        # 메시지가 없다면 None 반환
+        return None
 
-    # 요청 사용자와 대화하는 상대방의 id를 가져오는 메소드입니다.
-    # def get_opponent_id(self, obj):
-    #    request_user_id = self.kwargs.get('user_id')
-    #   # 요청한 사용자가 도움 요청자일 경우, 도움 제공자의 id를 반환합니다.
-    #     if request_user_id == obj.helped:
-    #         return obj.helper
-    #     else:  # 그렇지 않다면, 도움 요청자의 id를 반환합니다.
-    #         return obj.helped
-
-
-
+    # 상대방 정보를 가져오는 메소드
+    def get_opponent(self, obj):
+        request_user_id = self.context['user']
+        # 요청한 사용자가 도움 요청자일 경우, 도움 제공자의 id를 반환
+        if request_user_id == obj.helped:
+            return UserSerializer(obj.helper).data
+        else:  # 그렇지 않다면, 도움 요청자의 id를 반환합니다.
+            return UserSerializer(User.objects.get(id=obj.helped)).data

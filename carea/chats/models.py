@@ -7,6 +7,7 @@ class ChatRoom(models.Model):
     help = models.ForeignKey(Help, on_delete=models.PROTECT)
     helped = models.IntegerField()   # 도움 요청자 id
     helper = models.ForeignKey(User, on_delete=models.PROTECT)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class Chat(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.PROTECT)
