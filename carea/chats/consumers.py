@@ -37,7 +37,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # 일반 예외 처리 (예: 오류 기록)
             pass
 
-    # Receive message from WebSocket
+    # Receive message from WebSocket (클라이언트로부터)
     async def receive(self, text_data):
         content = json.loads(text_data)
 
@@ -73,7 +73,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             message = event['message']
             user_id = event['user_id']
 
-            # Send message to WebSocket
+            # Send message to WebSocket (클라이언트로)
             await self.send(text_data=json.dumps({"message": message, "user_id": user_id}))
 
         except Exception as e:
