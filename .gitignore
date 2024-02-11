@@ -99,3 +99,6 @@ venv.bak/
 
 # Google Cloud account
 carea-project-5ba12d932822.json
+
+# Google OAuth 2.0 credential
+secrets.json
