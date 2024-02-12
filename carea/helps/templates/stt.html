@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket File Upload</title>
+</head>
+<body>
+    <!-- 첫 번째 버튼: 텍스트 메시지 전송 -->
+    <input type="text" id="textMessage" placeholder="Enter text message">
+    <button onclick="sendTextMessage(1)">Send Text Message</button>
+
+    <hr>
+
+    <!-- 두 번째 버튼: WAV 파일 선택 및 전송 -->
+    <input type="file" id="fileInput" accept=".wav">
+    <button onclick="sendBinaryFile()">Send Binary File</button>
+
+    <script>
+        const textMessageInput = document.getElementById('textMessage');
+        const fileInput = document.getElementById('fileInput');
+
+        async function sendTextMessage(room_id) {
+            const textMessage = textMessageInput.value.trim();
+
+            if (textMessage !== '') {
+                // Establish WebSocket connection
+                const socket = new WebSocket(`ws://127.0.0.1:8000/ws/helps/stt/${room_id}/`);
+
+                socket.addEventListener('open', (event) => {
+                    // Send text message to the server
+                    socket.send(JSON.stringify({ type: 'text', message: textMessage }));
+                });
+
+                socket.addEventListener('message', (event) => {
+                    // Handle response from the server
+                    const data = JSON.parse(event.data)
+                    console.log('Server response:', data.message);
+                    socket.close();
+                });
+
+                socket.addEventListener('close', (event) => {
+                    // Handle WebSocket connection close
+                    console.log('WebSocket closed:', event);
+                });
+
+                socket.addEventListener('error', (event) => {
+                    // Handle WebSocket error
+                    console.error('WebSocket error:', event);
+                });
+            } else {
+                console.error('Text message cannot be empty.');
+            }
+        }
+
+        async function sendBinaryFile() {
+            const file = fileInput.files[0];
+
+            if (file) {
+                // Establish WebSocket connection
+                const socket = new WebSocket('ws://127.0.0.1:8000/ws/helps/stt/1/');
+
+                socket.addEventListener('open', async (event) => {
+                    // Read the binary file as ArrayBuffer
+                    const arrayBuffer = await file.arrayBuffer();
+                    const binaryData = new Uint8Array(arrayBuffer);
+
+                    // Send binary data to the server
+                    socket.send(binaryData);
+                });
+
+                socket.addEventListener('message', (event) => {
+                    // Handle response from the server
+                    const data = JSON.parse(event.data)
+                    console.log('Server response:', data.message);
+                    socket.close();
+                });
+
+                socket.addEventListener('close', (event) => {
+                    // Handle WebSocket connection close
+                    console.log('WebSocket closed:', event);
+                });
+
+                socket.addEventListener('error', (event) => {
+                    // Handle WebSocket error
+                    console.error('WebSocket error:', event);
+                });
+            } else {
+                console.error('No file selected.');
+            }
+        }
+    </script>
+</body>
+</html>

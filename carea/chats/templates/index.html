@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Application</title>
+<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+<div id="chat-container">
+    <!-- 로그인 버튼 -->
+    <button onclick="loginAsUser(2)">User 2 (자준청)</button>
+    <button onclick="loginAsUser(3)">User 3 (캐리아)</button>
+    
+    <!-- 채팅방 메시지 -->
+    <div id="chat-messages"></div>
+    
+    <!-- 메시지 입력 및 전송 -->
+    <input type="text" id="message-input" placeholder="메시지를 입력하세요">
+    <button id="send-btn">보내기</button>
+</div>
+<script src="{% static 'scripts.js' %}"></script>
+</body>
+</html>
