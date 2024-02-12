@@ -21,5 +21,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("chats/", include("chats.urls")),
     path("posts/", include("posts.urls")),
-    path("helps/", include("helps.urls"))
+    path("helps/", include("helps.urls")),
+
+    # JWT 기반 회원 기능
+    path('users/', include('dj_rest_auth.urls')),
+    path('users/registration/', include('dj_rest_auth.registration.urls')),
 ]

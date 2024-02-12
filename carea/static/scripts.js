@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.loginAsUser = async (user_id) => {
         currentUserId = user_id;
-        visitorUserId = user_id === 1 ? 2 : 1;
+        visitorUserId = user_id === 2 ? 3 : 2;
         await openOrCreateRoom();
     };
 
