@@ -6,4 +6,5 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.PROTECT)
     content = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_info = models.TextField(default="")
     created_at = models.DateTimeField(auto_now_add=True)
