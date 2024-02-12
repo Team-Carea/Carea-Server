@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from .serializers import ChatRoomSerializer, ChatSerializer
 from .models import ChatRoom, Chat
@@ -104,10 +104,16 @@ class ChatListView(generics.ListAPIView):
         # URL 파라미터에서 'room_id' 값 가져옴
         room_id = self.kwargs.get('room_id')
 
-        # room_id가 제공되지 않았을 경우, 에러 메시지와 함께 400 상태 코드 응답 반환
+        # room_id가 제공되지 않았을 경우, 404 Bad Request
         if not room_id:
-            content = {'isSuccess': False, 'message': 'room_id 파라미터가 필요합니다.'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError({'isSuccess': False, 'message': 'room_id 파라미터가 필요합니다.'})
 
-        # {'isSuccess': True, 'message': '요청에 성공하였습니다.', 'result': queryset}로 변경 안 될지
-        return Chat.objects.filter(room=room_id)
+        room = ChatRoom.objects.get(id=room_id)
+        user = self.request.user
+
+        # 로그인한 유저가 채팅방 유저가 아닌 경우, 403 Forbidden
+        if not (user.id == room.helped or user == room.helper):
+            raise PermissionDenied({'isSuccess': False, 'message': '채팅방 이용자가 아닙니다.'})
+
+        # {'isSuccess': True, 'message': '요청에 성공하였습니다.'} 추가가 잘 안 됨
+        return Chat.objects.filter(room=room)
