@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .serializers import PostSerializer
 from .models import Post
-from users.models import User
 # Create your views here.
-
 
 # 카테고리 별 게시물 목록과 카테고리 값 자체를 가져오기 위한 클래스
 class CategoryInfo:
-
     # 카테고리 내 모든 게시물
     def get_category_list(self, category):
         # DB에서 카테고리를 기준으로 값을 가져온다.
@@ -17,44 +17,56 @@ class CategoryInfo:
             lists = Post.objects.all().order_by('-created_at')
         return lists
 
-    # 카테고리 단일 값
-    def get_category_value(self, category):
-        return category
-
-def view_category(request, category) :
+@api_view(['GET', 'POST'])
+#카테고리 내의 게시물을 보여줌.
+def category_page(request, category) :
     category_instance = CategoryInfo()
     category_posts = category_instance.get_category_list(category)
-    # 게시물 작성 페이지에서 카테고리 목록 페이지로 돌아오기 위함
-    global g_category_value
-    g_category_value = category_instance.get_category_value(category)
-    return render(request, 'category_select.html', {'category': category_posts, 'g_category_value': g_category_value})
 
-# 게시물 작성을 위한 클래스 생성
-class WritePost:
-    # 게시물 작성 페이지 출력
-    def view_write_page(self, request):
-        return render(request, 'post.html')
+    posts_serializer = PostSerializer(category_posts, many=True)
 
-    # 게시물 정보를 DB에 저장
-    def save_post_info(self, request):
-        # 임의로 user_id를 3로 설정
-        user_id = 3
-        Post.objects.create(
-            title=request.POST.get('title'),
-            content=request.POST.get('content'),
-            category=request.POST.get('category'),
-            user=User.objects.get(id=user_id)
-        )
+    #카테고리 목록
+    categories = ['latest', 'free', 'economic', 'life', 'future']
 
-def write_post(request):
-    post_instance = WritePost()
-    if request.method == "POST":
-        post_instance.save_post_info(request)
-        # 이전 페이지로 돌아가기
-        return view_category(request, g_category_value)
-    else:
-        return post_instance.view_write_page(request)
-    # 게시물 상세 보기 기능을 위한 클래스
+    # 요청이 GET인 경우 : 카테고리에 해당하는 게시물들을 보여줌.
+    if request.method == 'GET' :
+        if (category in categories) :
+            return Response({
+                "isSuccess" : True,
+                "message" : "해당 카테고리의 게시물 출력에 성공했습니다.",
+                "result" : posts_serializer.data
+            }, status=200)
+        # 카테고리 값이 아닌 값이라면
+        else :
+            return Response({
+                "isSuccess" : False,
+                "message" : "해당 카테고리 값을 찾을 수 없습니다."
+            }, status=404)
+
+    # 요청이 POST인 경우 게시글을 작성하도록 함.
+    elif request.method == "POST":
+        write_serializer = PostSerializer(data=request.data)
+        if write_serializer.is_valid():
+            post_instance = write_serializer.save()
+            # 특정 게시판 내에서는 카테고리 선택을 할 수 없음
+            if(category != "latest") :
+                post_instance.category = category
+                post_instance.save()
+
+            return Response({
+                "isSuccess" : True,
+                "message" : "게시물이 등록되었습니다.",
+                "result" : posts_serializer.data
+            }, status=201)
+
+        else:
+            return Response({
+                "isSuccess" : False,
+                "message": "제목/내용을 입력하세요."
+            }, status=400)
+
+
+# 게시물 상세 보기 기능을 위한 클래스
 class PostDetail:
     # 게시물의 포스트 아이디 받아오기
     def get_post_info(self, pk):
@@ -62,7 +74,22 @@ class PostDetail:
         return detail_info
 
 # 포스트 아이디를 통해 게시물의 상세정보 전달
-def view_detail(request, post_id):
+@api_view(['GET', 'POST'])
+def detail(request, post_id):
     detail_instance = PostDetail()
     post_detail = detail_instance.get_post_info(post_id)
-    return render(request, 'post_detail.html', {'detail': post_detail})
+    detail_serializer = PostSerializer(post_detail)
+
+    # 요청이 GET인 경우 게시물의 상세 정보 출력 및 댓글 출력
+    if request.method == "GET" :
+        if post_detail is not None:
+            return Response({
+                "isSuccess" : True,
+                "message" : "상세 정보 출력에 성공했습니다.",
+                "result" : detail_serializer.data
+            }, status=200)
+        else:
+            return Response({
+                "isSuccess" : False,
+                "message" : "해당 게시물이 없습니다."
+            }, status=404)
