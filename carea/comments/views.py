@@ -17,12 +17,20 @@ def comment(request, post_id) :
     comments_list = comment_instance.view_comment(post_id)
     comments_serializer = CommentSerializer(comments_list, many=True)
 
+
     # 댓글 리스트 출력
     if (request.method == "GET"):
-        return Response({
-            "message" : "댓글 출력에 성공하였습니다.",
-            "data" : comments_serializer.data
-        }, status=201)
+        if (comments_serializer.data is not None) :
+            return Response({
+                "isSuccess" : True,
+                "message" : "댓글 출력에 성공하였습니다.",
+                "result" : comments_serializer.data
+            }, status=200)
+        else :
+            return Response({
+                "isSuccess" : False,
+                "message" : "댓글이 존재하지 않습니다."
+            }, status=404)
 
     # 댓글 작성
     if (request.method == "POST"):
@@ -30,11 +38,13 @@ def comment(request, post_id) :
         if write_serializer.is_valid() :
             write_serializer.save()
             return Response({
-                "message" : "댓글 작성에 성공하였습니다.",
-                "data": comments_serializer.data
+                "isSuccess" : True,
+                "message" : "댓글이 등록되었습니다.",
+                "result": comments_serializer.data
             }, status=201)
         else:
             return Response({
-                "message": "댓글 작성에 실패하였습니다.",
+                "isSuccess" : False,
+                "message": "댓글을 입력하세요.",
                 "errors": write_serializer.errors
-            }, status=404)
+            }, status=400)
