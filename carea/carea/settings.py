@@ -83,7 +83,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'         # 회원가입 과정에서 이메�
 REST_AUTH = {
     'USE_JWT': True,        # JWT 이용
     'JWT_AUTH_HTTPONLY': False,     # 로그인 시 refresh token 보이게 설정
-    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer'     # 회원가입 시리얼라이저
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',    # 회원가입 시리얼라이저
+    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserDetailsSerializer',
 }
 
 REST_FRAMEWORK = {
