@@ -8,7 +8,6 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from .serializers import ChatRoomSerializer, ChatSerializer
 from .models import ChatRoom, Chat
 from helps.models import Help
-from users.models import User
 
 def index(request):
     return render(request, "index.html")
@@ -120,7 +119,7 @@ class ChatListView(generics.ListAPIView):
 
         # 로그인한 유저가 채팅방 유저가 아닌 경우, 403 Forbidden
         if not (user.id == room.helped or user == room.helper):
-            raise PermissionDenied({'isSuccess': False, 'message': '채팅방 이용자가 아닙니다.'})
+            raise PermissionDenied({'isSuccess': False, 'message': '채팅방 참여자가 아닙니다.'})
 
         # {'isSuccess': True, 'message': '요청에 성공하였습니다.'} 추가가 잘 안 됨
         return Chat.objects.filter(room=room)

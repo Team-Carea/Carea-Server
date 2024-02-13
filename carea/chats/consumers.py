@@ -10,8 +10,10 @@ from .models import ChatRoom, Chat
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         try:
-            # URL 경로에서 채팅방 ID 추출
+            # URL 경로에서 채팅방 id 추출
             self.room_id = self.scope["url_route"]["kwargs"]["room_id"]
+            # 미들웨어로 JWT 유저 정보 추출
+            self.user_id = self.scope["user"].id
 
             if not await self.check_room_exists(self.room_id):
                 raise ValueError('채팅방이 존재하지 않습니다.')
@@ -44,7 +46,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             # 수신된 JSON에서 필요한 정보를 추출
             message = content['message']
-            user_id = content['user_id']
+            user_id = self.user_id
 
             # 그룹 이름 가져옴
             self.room_group_name = f"chat_{self.room_id}"
@@ -95,7 +97,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message(self, room, user_id, message):
         if not user_id or not message:
-            raise ValueError("사용자 ID 및 메시지가 필요합니다.")
+            raise ValueError("사용자 id 및 메시지가 필요합니다.")
 
         # 메시지 생성하고 데이터베이스에 저장 (created_at은 auto_now_add=True로 현재 시간 자동 저장)
         Chat.objects.create(room=room, user=User.objects.get(id=user_id), message=message)
