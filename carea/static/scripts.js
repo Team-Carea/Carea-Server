@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
         visitorUserId = user_id === 2 ? 3 : 2;
         // 테스트 시 첫 번째 토큰은 '자준청', 두 번째 토큰은 '캐리아' (만료 시 재발급 후 수정)
         currentToken = user_id === 2
-            ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3ODQzNDQ3LCJpYXQiOjE3MDc3MzU4NzEsImp0aSI6IjUzMDcwODdmNmQ5YTQ1OGU4Mjk1MzMxODRlYzk4OWNlIiwidXNlcl9pZCI6Mn0.b4ZdKY36zLWMp9pSpXo2l9XITXTeChj0tvq2JR0htbc"
-            : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3ODQzNTQ5LCJpYXQiOjE3MDc3MzA2ODcsImp0aSI6IjNlZWQwNTlkZDJlNTRlZjViYzdlNmFjMGE2NjIzMDYwIiwidXNlcl9pZCI6M30.x4ig6GsMbC1WQdhkAL2yVaf_DejDFfxUh3vo2kBpBCU";
+            ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTA1MTA1LCJpYXQiOjE3MDc3MzU4NzEsImp0aSI6IjAxM2U4MWU5MDhmZTQxMDZiN2E4YTU5NzcyNzlhYjBjIiwidXNlcl9pZCI6Mn0.cHuOM0EXgSqMSBx82V7jDeENC9mx7V_TELmOvxUHDxo"
+            : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTA0NjQxLCJpYXQiOjE3MDc3MzA2ODcsImp0aSI6IjM4MzFlMDY4NDlhZTQzNDc5ZjQzNjM4Y2Y2NTllMTc3IiwidXNlcl9pZCI6M30.ssVXKlp_VGWro1et4eMiFfTlYqE1eb_NqnCc0s9BfRg";
         await openOrCreateRoom(currentToken);
     };
 
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupWebSocket(room_id, currentToken) {
-        socket = new WebSocket(`ws://127.0.0.1:8000/ws/chats/${room_id}/?token=${currentToken}`);
+        socket = new WebSocket(`ws://127.0.0.1:8000/ws/chats/${room_id}?token=${currentToken}`);
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
