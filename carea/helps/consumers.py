@@ -2,10 +2,8 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from django.contrib.auth.models import AnonymousUser
 
 from google.cloud import speech
-from rest_framework.exceptions import AuthenticationFailed
 
 from users.models import User
 from chats.models import ChatRoom
@@ -18,11 +16,13 @@ class HelpConsumer(AsyncWebsocketConsumer):
 
             # 미들웨어로 JWT 유저 정보 추출
             self.user = self.scope["user"]
+
             # 채팅방 가져오기
             room = await self.get_room(self.room_id)
 
+            # 채팅방에 참여하는 도움 요청자 및 제공자만 인증 가능
             if not await self.is_user_in_room(self.user, room):
-                print('Error: 채팅방 참여자만 인증할 수 있습니다.')
+                print('채팅방 참여자만 인증할 수 있습니다.')
                 await self.close()
 
             # channel layer에 저장할 그룹 이름
@@ -33,7 +33,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
             await self.accept()
 
         except ValueError as e:
-            # 채팅방이 존재하지 않을 경우, 오류 메시지 보내고 연결 종료
+            # 값 오류가 있을 경우, 오류 메시지 보내고 연결 종료
             print(e)
             await self.close()
 
@@ -60,7 +60,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
             if text_data:
                 print(await self.check_helper(room))
                 if not await self.check_helper(room):
-                    print('Error: 도움 제공자만 인증할 문장을 보낼 수 있습니다.')
+                    print('도움 제공자만 인증할 문장을 보낼 수 있습니다.')
                     await self.send(text_data=json.dumps({'isSuccess': False, 'message': '도움 요청자만 인증할 문장을 말할 수 있습니다.'}))
                     await self.close()
 
@@ -84,7 +84,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
             # STT 써서 랜덤 문장 비교 후 DB에 포인트 업데이트, 결과 프론트로 보내기
             elif bytes_data:
                 if not await self.check_helped(room):
-                    print('Error: 도움 요청자만 인증할 문장을 말할 수 있습니다.')
+                    print('도움 요청자만 인증할 문장을 말할 수 있습니다.')
                     await self.send(text_data=json.dumps({'isSuccess': False, 'message': '도움 요청자만 인증할 문장을 말할 수 있습니다.'}))
                     await self.close()
 
@@ -151,7 +151,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
             room = ChatRoom.objects.get(id=room_id)
             return room
         except ChatRoom.DoesNotExist:
-            raise ValueError("Error: 채팅방이 존재하지 않습니다.")
+            raise ValueError("채팅방이 존재하지 않습니다.")
 
     @database_sync_to_async
     def is_user_in_room(self, user, room):

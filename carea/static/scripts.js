@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
         visitorUserId = user_id === 2 ? 3 : 2;
         // 테스트 시 첫 번째 토큰은 '자준청', 두 번째 토큰은 '캐리아' (만료 시 재발급 후 수정)
         currentToken = user_id === 2
-            ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTA1MTA1LCJpYXQiOjE3MDc3MzU4NzEsImp0aSI6IjAxM2U4MWU5MDhmZTQxMDZiN2E4YTU5NzcyNzlhYjBjIiwidXNlcl9pZCI6Mn0.cHuOM0EXgSqMSBx82V7jDeENC9mx7V_TELmOvxUHDxo"
-            : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTA0NjQxLCJpYXQiOjE3MDc3MzA2ODcsImp0aSI6IjM4MzFlMDY4NDlhZTQzNDc5ZjQzNjM4Y2Y2NTllMTc3IiwidXNlcl9pZCI6M30.ssVXKlp_VGWro1et4eMiFfTlYqE1eb_NqnCc0s9BfRg";
+            ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTIzMzgwLCJpYXQiOjE3MDc3MzU4NzEsImp0aSI6ImViZDUyYzZjZGQyNDRiNGY5MzRiNzhlNmY5OGRhY2M1IiwidXNlcl9pZCI6Mn0.Kjtw4kquIdBWK287XGa9qksmlXputFZV-UlVz-pfhNQ"
+            : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTIzNDExLCJpYXQiOjE3MDc3MzA2ODcsImp0aSI6IjAwZmJjNjM4NmM2ZjRiNWFiMTdhZTViMThiNmYyZTlmIiwidXNlcl9pZCI6M30.UgKjeYKfxxd4Zeex1p26IMTvgWUCHP-Q85Efe2jvDsc";
         await openOrCreateRoom(currentToken);
     };
 
