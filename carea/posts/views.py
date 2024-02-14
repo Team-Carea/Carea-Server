@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import PostSerializer
 from .models import Post
+from users.models import User
 # Create your views here.
 
 # 카테고리 별 게시물 목록과 카테고리 값 자체를 가져오기 위한 클래스
@@ -45,14 +46,17 @@ def category_page(request, category) :
 
     # 요청이 POST인 경우 게시글을 작성하도록 함.
     elif request.method == "POST":
+        #유저 인스턴스를 받아와서 write_serilizer의 user 필드에 저장해야함
+        user_info = get_object_or_404(User, id=request.data['user'])
+
         write_serializer = PostSerializer(data=request.data)
         if write_serializer.is_valid():
-            post_instance = write_serializer.save()
             # 특정 게시판 내에서는 카테고리 선택을 할 수 없음
-            if(category != "latest") :
-                post_instance.category = category
-                post_instance.save()
-
+            if(category == "latest") :
+                write_serializer.save(category=request.data['category'], user=user_info)
+            else :
+                write_serializer.save(category=category, user=user_info)
+                
             return Response({
                 "isSuccess" : True,
                 "message" : "게시물이 등록되었습니다.",
