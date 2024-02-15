@@ -15,8 +15,8 @@ class User(AbstractUser):
 
     # 필요한 필드 추가
     nickname = models.CharField(max_length=10)
-    profile_url = models.CharField(max_length=255, blank=True, null=True)
-    introduction = models.CharField(max_length=100, blank=True, null=True)
+    profile_url = models.URLField(blank=True, null=True)    # 회원가입 선택 항목
+    introduction = models.CharField(max_length=100, blank=True, null=True)  # 회원가입 선택 항목
     point = models.IntegerField(default=0)
 
     def __str__(self):
