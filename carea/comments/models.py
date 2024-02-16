@@ -7,4 +7,3 @@ class Comment(models.Model):
     content = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    created_at = models.DateTimeField(auto_now_add=True)
