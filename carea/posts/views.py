@@ -44,7 +44,7 @@ def category_page(request, category) :
 
     # 요청이 POST인 경우 게시글을 작성하도록 함.
     elif request.method == "POST":
-        # 헤더에서 받은 토큰으로 유저 받아오기
+        # 헤더에서 받은 토큰으로 유저 불러오기
         user = request.user
 
         write_serializer = PostSerializer(data=request.data)

@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import CommentSerializer
 
-# Create your views here.
 
 # 댓글 리스트 출력을 위한 클래스
 class CommentInfo:
@@ -34,7 +33,7 @@ def comment(request, post_id) :
 
     # 댓글 작성
     if (request.method == "POST"):
-        # 헤더에서 받은 토큰으로 유저 받아오기
+        # 헤더에서 받은 토큰으로 유저 불러오기
         user = request.user
 
         write_serializer = CommentSerializer(data=request.data)
