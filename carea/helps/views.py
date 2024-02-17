@@ -5,7 +5,7 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
-from .serializers import HelpSerializer, CustomHelpSerializer
+from .serializers import HelpSerializer, MainHelpSerializer, DetailHelpSerializer
 from .models import Help
 from users.models import User
 
@@ -37,7 +37,7 @@ def maps(request):
 
     if(request.method=='GET'):
         help_list = help_instance.view_helps()
-        helps_serializer = CustomHelpSerializer(help_list, many=True)
+        helps_serializer = MainHelpSerializer(help_list, many=True)
 
         if(helps_serializer is not None) :
             return Response({
@@ -81,7 +81,7 @@ def helps(request, help_id):
     if(request.method == 'GET') :
         help_instance = Map()
         help_info = help_instance.help_detail(help_id)
-        help_serializer = HelpSerializer(help_info)
+        help_serializer = DetailHelpSerializer(help_info)
 
         if (help_serializer is not None):
             return Response({
