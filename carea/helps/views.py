@@ -19,7 +19,7 @@ class Map():
         return help_list
 
     def geocode(self,address):
-        gmaps = googlemaps.Client(key=settings.GOOGLE_MAP_API_KEY)
+        gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
         geocode_result = json.dumps(gmaps.geocode(address))
         result = json.loads(geocode_result)
         latitude = result[0]['geometry']['location']['lat']
