@@ -6,7 +6,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # 필요한 필드만을 지정
-        fields = ['nickname']
+        fields = ['nickname', 'profile_url']
 
 class CommentSerializer(serializers.ModelSerializer):
     #user의 특정 정보 (닉네임 등)
