@@ -1,11 +1,10 @@
-from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import PostSerializer
+from .serializers import CategoryPostSerializer,PostSerializer
 from .models import Post
 from users.models import User
-# Create your views here.
+
 
 # 카테고리 별 게시물 목록과 카테고리 값 자체를 가져오기 위한 클래스
 class CategoryInfo:
@@ -24,7 +23,7 @@ def category_page(request, category) :
     category_instance = CategoryInfo()
     category_posts = category_instance.get_category_list(category)
 
-    posts_serializer = PostSerializer(category_posts, many=True)
+    posts_serializer = CategoryPostSerializer(category_posts, many=True)
 
     #카테고리 목록
     categories = ['latest', 'free', 'economic', 'life', 'future']
