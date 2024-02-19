@@ -86,12 +86,12 @@ def helps(request, help_id):
         if (help_serializer is not None):
             return Response({
                 "isSuccess" : True,
-                "Message" : "요청글 정보 출력에 성공했습니다.",
+                "message" : "요청글 정보 출력에 성공했습니다.",
                 "result" : help_serializer.data
-            },status=200)
+            }, status=200)
 
         else:
             return Response({
                 "isSuccess" : False,
-                "Message" : "요청글을 찾을 수 없습니다."
-            },status=404)
+                "message" : "요청글을 찾을 수 없습니다."
+            }, status=404)
