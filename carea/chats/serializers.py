@@ -33,9 +33,10 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
     # 상대방 정보를 가져오는 메소드
     def get_opponent(self, obj):
-        request_user_id = self.context['user']
-        # 요청한 사용자가 도움 요청자일 경우, 도움 제공자의 id를 반환
-        if request_user_id == obj.helped:
+        request_user = self.context['user']
+        # 요청한 사용자가 도움 요청자일 경우, 도움 제공자 반환
+        if request_user.id == obj.helped:
             return UserSerializer(obj.helper).data
-        else:  # 그렇지 않다면, 도움 요청자의 id를 반환합니다.
+        # 그렇지 않다면, 도움 요청자 반환
+        else:
             return UserSerializer(User.objects.get(id=obj.helped)).data

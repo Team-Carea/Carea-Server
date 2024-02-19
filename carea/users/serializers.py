@@ -10,7 +10,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     # 기본 설정 필드: email, password
     # 추가 설정 필드: nickname, profile_url, introduction
     nickname = serializers.CharField(max_length=10)
-    profile_url = serializers.CharField(max_length=255, allow_blank=True, allow_null=True)
+    profile_url = serializers.URLField(allow_blank=True, allow_null=True)
     introduction = serializers.CharField(max_length=100, allow_blank=True, allow_null=True)
 
     def get_cleaned_data(self):

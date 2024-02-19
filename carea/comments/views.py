@@ -2,10 +2,7 @@ from comments.models import Comment
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import CommentSerializer
-from users.models import User
-from django.shortcuts import get_object_or_404
 
-# Create your views here.
 
 # 댓글 리스트 출력을 위한 클래스
 class CommentInfo:
@@ -36,12 +33,12 @@ def comment(request, post_id) :
 
     # 댓글 작성
     if (request.method == "POST"):
-        # 유저 인스턴스를 write_serailzier의 user 필드값으로 넘겨주어야함
-        user_info = get_object_or_404(User, id=request.data['user'])
+        # 헤더에서 받은 토큰으로 유저 불러오기
+        user = request.user
 
         write_serializer = CommentSerializer(data=request.data)
         if write_serializer.is_valid() :
-            write_serializer.save(post_id=post_id, user=user_info)
+            write_serializer.save(post_id=post_id, user=user)
             return Response({
                 "isSuccess" : True,
                 "message" : "댓글이 등록되었습니다.",

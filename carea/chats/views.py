@@ -3,12 +3,11 @@ from django.shortcuts import render
 
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from .serializers import ChatRoomSerializer, ChatSerializer
 from .models import ChatRoom, Chat
 from helps.models import Help
-from users.models import User
 
 def index(request):
     return render(request, "index.html")
@@ -27,11 +26,8 @@ class ChatRoomListCreateView(generics.ListCreateAPIView):
     # GET 요청에 대한 쿼리셋을 정의하는 메소드
     def get_queryset(self):
         try:
-            # 요청의 path variable에서 'user_id' 값 가져옴
-            user_id = self.kwargs.get('user_id')
-
-            if not user_id:
-                raise ValidationError('user_id 파라미터가 필요합니다.')
+            # 요청으로부터 유저 가져옴
+            user_id = self.request.user.id
 
             # 해당 id를 가진 사용자가 속한 채팅방들 찾기
             return ChatRoom.objects.filter(
@@ -49,19 +45,20 @@ class ChatRoomListCreateView(generics.ListCreateAPIView):
     def get_serializer_context(self):
         # 부모 클래스의 컨텍스트 가져오는 메소드 호출
         context = super(ChatRoomListCreateView, self).get_serializer_context()
-        # 컨텍스트에 현재의 요청 객체를 추가합니다.
-        context['user'] = self.kwargs.get('user_id')
+        # 컨텍스트에 유저 추가
+        context['user'] = self.request.user
         return context
 
     # POST 요청을 처리하여 새로운 리소스를 생성하는 메소드
     def create(self, request, *args, **kwargs):
-        # 요청 데이터로부터 시리얼라이저 생성
-        serializer = self.get_serializer(data=request.data)
-        # 시리얼라이저의 유효성 검사 수행, 유효하지 않을 경우 예외 발생
-        serializer.is_valid(raise_exception=True)
-
         try:
-            self.perform_create(serializer)
+            # 요청 body로부터 요청글 id 가져오기
+            help_id = request.data.get('help')
+            # 요청글 id 없는 경우
+            if not help_id:
+                return Response({'isSuccess': False, 'message': 'body에 도움 요청글 id가 필요합니다.'})
+
+            serializer = self.perform_create(help_id)
         except ImmediateResponseException as e:
             # 즉각적인 응답이 필요할 경우 예외를 통해 응답 반환
             return e.response
@@ -71,29 +68,38 @@ class ChatRoomListCreateView(generics.ListCreateAPIView):
                          'result': serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
 
     # 시리얼라이저를 통해 데이터베이스에 객체를 저장하는 메소드
-    def perform_create(self, serializer):
-        # 요청 데이터에서 help, helped, helper 가져옴
-        help_id = self.request.data.get('help')
+    def perform_create(self, help_id):
+        # 도움 요청글 객체
         help = Help.objects.get(id=help_id)
 
-        helped = self.request.data.get('helped')
+        # 요청글에서 도움 요청자 id 받아옴
+        helped_id = help.user.id
 
-        helper_id = self.request.data.get('helper')
-        helper = User.objects.get(id=helper_id)
+        # 토큰을 통해 도움 제공자 객체 받아옴
+        helper = self.request.user
+        if helper.id == helped_id:
+            # 본인의 요청글에서는 채팅방 생성 불가 (도움 제공자만 가능)
+            raise ImmediateResponseException(Response(
+                {'isSuccess': False, 'message': '본인의 도움 요청글에서는 채팅방을 만들 수 없습니다.'},
+                status=status.HTTP_403_FORBIDDEN))
 
         # 요청글의 채팅방이 이미 있는지 확인
         existing_chatroom = ChatRoom.objects.filter(
             help=help,
-            helped=helped,
+            helped=helped_id,
             helper=helper
         ).first()
 
-        # 이미 존재하는 채팅방이 있다면 해당 채팅방의 정보를 시리얼라이즈하여 응답
+        # 이미 존재하는 채팅방이 있다면 해당 채팅방의 정보를 시리얼라이즈
         if existing_chatroom:
-            serializer = ChatRoomSerializer(existing_chatroom, context={'request': self.request})
-            raise ImmediateResponseException(Response(serializer.data, status=status.HTTP_200_OK))
-        # 없다면 새 채팅방 객체 저장
-        serializer.save(help=help, helped=helped, helper=helper)
+            serializer = ChatRoomSerializer(existing_chatroom, context=self.get_serializer_context())
+            raise ImmediateResponseException(Response(
+                {'isSuccess': True, 'message': '기존에 있던 채팅방 정보를 불러옵니다.',
+                 'result': serializer.data}, status=status.HTTP_200_OK))
+
+        # 없다면 새 채팅방 객체 생성 후 시리얼라이즈
+        new_chatroom = ChatRoom.objects.create(help=help, helped=helped_id, helper=helper)
+        return ChatRoomSerializer(new_chatroom, context=self.get_serializer_context())
 
 # 채팅 메시지 목록 조회
 class ChatListView(generics.ListAPIView):
@@ -104,10 +110,16 @@ class ChatListView(generics.ListAPIView):
         # URL 파라미터에서 'room_id' 값 가져옴
         room_id = self.kwargs.get('room_id')
 
-        # room_id가 제공되지 않았을 경우, 에러 메시지와 함께 400 상태 코드 응답 반환
+        # room_id가 제공되지 않았을 경우, 404 Bad Request
         if not room_id:
-            content = {'isSuccess': False, 'message': 'room_id 파라미터가 필요합니다.'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError({'isSuccess': False, 'message': 'room_id 파라미터가 필요합니다.'})
 
-        # {'isSuccess': True, 'message': '요청에 성공하였습니다.', 'result': queryset}로 변경 안 될지
-        return Chat.objects.filter(room=room_id)
+        room = ChatRoom.objects.get(id=room_id)
+        user = self.request.user
+
+        # 로그인한 유저가 채팅방 유저가 아닌 경우, 403 Forbidden
+        if not (user.id == room.helped or user == room.helper):
+            raise PermissionDenied({'isSuccess': False, 'message': '채팅방 참여자가 아닙니다.'})
+
+        # {'isSuccess': True, 'message': '요청에 성공하였습니다.'} 추가가 잘 안 됨
+        return Chat.objects.filter(room=room)

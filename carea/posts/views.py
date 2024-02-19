@@ -6,6 +6,7 @@ from .models import Post
 from users.models import User
 
 
+
 # 카테고리 별 게시물 목록과 카테고리 값 자체를 가져오기 위한 클래스
 class CategoryInfo:
     # 카테고리 내 모든 게시물
@@ -45,16 +46,16 @@ def category_page(request, category) :
 
     # 요청이 POST인 경우 게시글을 작성하도록 함.
     elif request.method == "POST":
-        #유저 인스턴스를 받아와서 write_serilizer의 user 필드에 저장해야함
-        user_info = get_object_or_404(User, id=request.data['user'])
+        # 헤더에서 받은 토큰으로 유저 불러오기
+        user = request.user
 
         write_serializer = PostSerializer(data=request.data)
         if write_serializer.is_valid():
             # 특정 게시판 내에서는 카테고리 선택을 할 수 없음
             if(category == "latest") :
-                write_serializer.save(category=request.data['category'], user=user_info)
+                write_serializer.save(category=request.data['category'], user=user)
             else :
-                write_serializer.save(category=category, user=user_info)
+                write_serializer.save(category=category, user=user)
                 
             return Response({
                 "isSuccess" : True,

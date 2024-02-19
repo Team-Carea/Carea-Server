@@ -3,7 +3,7 @@ from users.models import User
 
 class Help(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=255)
     content = models.TextField()
     location = models.CharField(max_length=255, default="")
     latitude = models.DecimalField(max_digits=15, decimal_places=12, default=0.0)

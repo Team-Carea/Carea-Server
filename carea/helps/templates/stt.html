@@ -8,24 +8,24 @@
 <body>
     <!-- 첫 번째 버튼: 텍스트 메시지 전송 -->
     <input type="text" id="textMessage" placeholder="Enter text message">
-    <button onclick="sendTextMessage(1)">Send Text Message</button>
+    <button onclick="sendTextMessage(1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTExOTkyLCJpYXQiOjE3MDc3MzA2ODcsImp0aSI6ImQ5YjZhMDU4ZmZjNTRkZjU5YzIwMDM2MDI4MjIzNDk3IiwidXNlcl9pZCI6M30.A2QuxorlG-XXnFSnTG6VO1rJOy-yvdiz5sQsfzBWtBw')">Send Text Message</button>
 
     <hr>
 
     <!-- 두 번째 버튼: WAV 파일 선택 및 전송 -->
     <input type="file" id="fileInput" accept=".wav">
-    <button onclick="sendBinaryFile()">Send Binary File</button>
+    <button onclick="sendBinaryFile(1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTExOTc5LCJpYXQiOjE3MDc3MzU4NzEsImp0aSI6ImRlNmUwYTYyNTZiNTQ3YmZiZTUxOTEyM2YzYTIxZWNlIiwidXNlcl9pZCI6Mn0.X8t31DZBnWvSLR3SWzITOb0cP_iKhNRUr5pnUrl3MEM')">Send Binary File</button>
 
     <script>
         const textMessageInput = document.getElementById('textMessage');
         const fileInput = document.getElementById('fileInput');
 
-        async function sendTextMessage(room_id) {
+        async function sendTextMessage(room_id, currentToken) {
             const textMessage = textMessageInput.value.trim();
 
             if (textMessage !== '') {
                 // Establish WebSocket connection
-                const socket = new WebSocket(`ws://127.0.0.1:8000/ws/helps/stt/${room_id}/`);
+                const socket = new WebSocket(`ws://127.0.0.1:8000/ws/helps/stt/${room_id}?token=${currentToken}`);
 
                 socket.addEventListener('open', (event) => {
                     // Send text message to the server
@@ -53,12 +53,12 @@
             }
         }
 
-        async function sendBinaryFile() {
+        async function sendBinaryFile(room_id, currentToken) {
             const file = fileInput.files[0];
 
             if (file) {
                 // Establish WebSocket connection
-                const socket = new WebSocket('ws://127.0.0.1:8000/ws/helps/stt/1/');
+                const socket = new WebSocket(`ws://127.0.0.1:8000/ws/helps/stt/${room_id}?token=${currentToken}`);
 
                 socket.addEventListener('open', async (event) => {
                     // Read the binary file as ArrayBuffer
