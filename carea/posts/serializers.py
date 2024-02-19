@@ -10,8 +10,9 @@ class CustomUserSerializer(CustomUserDetailsSerializer):
         fields = ['nickname']
 
 class PostSerializer(serializers.ModelSerializer):
-    #user의 특정 정보 (닉네임 등)
-    user= CustomUserSerializer(read_only=True)
+    # user의 특정 정보 (닉네임 등)
+    user = CustomUserSerializer(read_only=True)
+
     class Meta:
         model = Post
         fields = ['id', 'title', 'content', 'category', 'created_at', 'updated_at', 'user']
