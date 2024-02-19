@@ -7,8 +7,6 @@ from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from .serializers import HelpSerializer, MainHelpSerializer, DetailHelpSerializer
 from .models import Help
-from users.models import User
-
 
 def stt(request):
     return render(request, 'stt.html')
@@ -54,14 +52,14 @@ def maps(request):
 
 
     elif(request.method=='POST'):
-        # 유저 인스턴스를 help_serailzier의 user 필드값으로 넘겨주=어야함
-        user_info = get_object_or_404(User, id=request.data['user'])
+        # 헤더에서 받은 토큰으로 유저 불러오기
+        user = request.user
         # 주소값을 받아서 위도 경도로 변환
         lat, lng = help_instance.geocode(request.data['location'])
         write_serializer = HelpSerializer(data=request.data)
 
         if(write_serializer.is_valid()):
-            write_serializer.save(user=user_info, latitude=lat, longitude=lng)
+            write_serializer.save(user=user, latitude=lat, longitude=lng)
             return Response({
                 "isSuccess" : True,
                 "message" : "요청글이 등록되었습니다.",
