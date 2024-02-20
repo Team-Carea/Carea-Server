@@ -99,7 +99,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
                     await self.channel_layer.group_send(
                         self.room_group_name, {
                             "type": "help_message",
-                            "message": True
+                            "message": transcription
                         }
                     )
 
@@ -109,7 +109,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
                     await self.channel_layer.group_send(
                         self.room_group_name, {
                             "type": "help_message",
-                            "message": False
+                            "message": transcription
                         }
                     )
 
