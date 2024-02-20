@@ -21,7 +21,7 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatRoom
-        fields = ('id', 'help', 'latest_message', 'opponent')
+        fields = ('id', 'help', 'latest_message', 'updated_at', 'opponent')
 
     # 최신 메시지를 가져오는 메소드
     def get_latest_message(self, obj):

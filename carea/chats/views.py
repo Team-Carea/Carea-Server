@@ -122,4 +122,4 @@ class ChatListView(generics.ListAPIView):
             raise PermissionDenied({'isSuccess': False, 'message': '채팅방 참여자가 아닙니다.'})
 
         # {'isSuccess': True, 'message': '요청에 성공하였습니다.'} 추가가 잘 안 됨
-        return Chat.objects.filter(room=room)
+        return (Chat.objects.filter(room=room, updated_at__isnull=False).order_by('-updated_at'))

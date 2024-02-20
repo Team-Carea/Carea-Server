@@ -99,7 +99,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
                     await self.channel_layer.group_send(
                         self.room_group_name, {
                             "type": "help_message",
-                            "message": "성공: 문장 일치"
+                            "message": True
                         }
                     )
 
@@ -109,7 +109,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
                     await self.channel_layer.group_send(
                         self.room_group_name, {
                             "type": "help_message",
-                            "message": "실패: 문장 불일치"
+                            "message": False
                         }
                     )
 
