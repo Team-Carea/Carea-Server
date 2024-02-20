@@ -119,14 +119,14 @@ class ChatListView(generics.ListAPIView):
 
         # room_id가 제공되지 않았을 경우, 404 Bad Request
         if not room_id:
-            raise ValidationError({'isSuccess': False, 'message': 'room_id 파라미터가 필요합니다.'})
+            raise ValidationError('room_id 파라미터가 필요합니다.')
 
         room = ChatRoom.objects.get(id=room_id)
         user = self.request.user
 
         # 로그인한 유저가 채팅방 유저가 아닌 경우, 403 Forbidden
         if not (user.id == room.helped or user == room.helper):
-            raise PermissionDenied({'isSuccess': False, 'message': '채팅방 참여자가 아닙니다.'})
+            raise PermissionDenied('채팅방 참여자가 아닙니다.')
 
         return Chat.objects.filter(room=room)
 
@@ -141,6 +141,9 @@ class ChatListView(generics.ListAPIView):
                 'result': serializer.data
             }
             return Response(data)
+        except PermissionDenied as e:
+            content = {'isSuccess': False, 'message': str(e)}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             content = {'isSuccess': False, 'message': str(e)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
