@@ -25,19 +25,26 @@ class ChatRoomListCreateView(generics.ListCreateAPIView):
 
     # GET 요청에 대한 쿼리셋을 정의하는 메소드
     def get_queryset(self):
-        try:
-            # 요청으로부터 유저 가져옴
-            user_id = self.request.user.id
+        # 요청으로부터 유저 가져옴
+        user_id = self.request.user.id
 
-            # 해당 id를 가진 사용자가 속한 채팅방들 찾기
-            return ChatRoom.objects.filter(
-                Q(helped=user_id) | Q(helper=user_id)
-            ).order_by('-updated_at')
-        except ValidationError as e:
-            content = {'isSuccess': False, 'message': e.detail}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        # 해당 id를 가진 사용자가 속한 채팅방들 찾기
+        return ChatRoom.objects.filter(
+            (Q(helped=user_id) | Q(helper=user_id)) & Q(updated_at__isnull=False)
+        ).order_by('-updated_at')
+
+    # GET 요청에 대한 커스텀 응답을 만드는 메소드 (list 메소드 오버라이드)
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            data = {
+                'isSuccess': True,
+                'message': '요청에 성공하였습니다.',
+                'result': serializer.data
+            }
+            return Response(data)
         except Exception as e:
-            # 다른 종류의 예외 발생 (예외 정보 로깅 가능)
             content = {'isSuccess': False, 'message': str(e)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
@@ -121,5 +128,19 @@ class ChatListView(generics.ListAPIView):
         if not (user.id == room.helped or user == room.helper):
             raise PermissionDenied({'isSuccess': False, 'message': '채팅방 참여자가 아닙니다.'})
 
-        # {'isSuccess': True, 'message': '요청에 성공하였습니다.'} 추가가 잘 안 됨
-        return (Chat.objects.filter(room=room, updated_at__isnull=False).order_by('-updated_at'))
+        return Chat.objects.filter(room=room)
+
+    # GET 요청에 대한 커스텀 응답을 만드는 메소드 (list 메소드 오버라이드)
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            data = {
+                'isSuccess': True,
+                'message': '요청에 성공하였습니다.',
+                'result': serializer.data
+            }
+            return Response(data)
+        except Exception as e:
+            content = {'isSuccess': False, 'message': str(e)}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
