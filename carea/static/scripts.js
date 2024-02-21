@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.loginAsUser = async (user_id) => {
         currentUserId = user_id;
-        visitorUserId = user_id === 2 ? 3 : 2;
+        visitorUserId = user_id === 26 ? 28 : 26;
         // 테스트 시 첫 번째 토큰은 '자준청', 두 번째 토큰은 '캐리아' (만료 시 재발급 후 수정)
-        currentToken = user_id === 2
-            ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTIzMzgwLCJpYXQiOjE3MDc3MzU4NzEsImp0aSI6ImViZDUyYzZjZGQyNDRiNGY5MzRiNzhlNmY5OGRhY2M1IiwidXNlcl9pZCI6Mn0.Kjtw4kquIdBWK287XGa9qksmlXputFZV-UlVz-pfhNQ"
-            : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3OTIzNDExLCJpYXQiOjE3MDc3MzA2ODcsImp0aSI6IjAwZmJjNjM4NmM2ZjRiNWFiMTdhZTViMThiNmYyZTlmIiwidXNlcl9pZCI6M30.UgKjeYKfxxd4Zeex1p26IMTvgWUCHP-Q85Efe2jvDsc";
+        currentToken = user_id === 26
+            ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NTMxMTA4LCJpYXQiOjE3MDg1MjM5MDgsImp0aSI6IjVlZjhkMDc3NTM1NjQ0ZTViMGRhMjJlOWVlNzMzM2ViIiwidXNlcl9pZCI6MjZ9.dAl0RLYpDkovd-waBq3CDMnH-Yi0wwxyCcjqUItWfUU"
+            : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4Njk4Mjk5LCJpYXQiOjE3MDg1MjU0OTksImp0aSI6IjQ1ODlhMmNiMzFhMzQ2MDQ4ZTU2MTZmMWQyYTZhMjcwIiwidXNlcl9pZCI6Mjh9.70rSR0rzgADvkvQmu_VA0wWFVyVMIx7CYrtaF5PpJVU";
         await openOrCreateRoom(currentToken);
     };
 
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sortedIds = [currentUserId, visitorUserId].sort();
 
-        currentRoomId = 1;
+        currentRoomId = 5;
 
         const response = await fetch(`http://127.0.0.1:8000/chats/${currentRoomId}/messages`, {
             method: 'GET',
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const messages = await response.json();
         console.log(messages);
         if (response.ok) {
-            displayMessages(messages);
+            displayMessages(messages.result);
         }
 
         setupWebSocket(currentRoomId, currentToken);
