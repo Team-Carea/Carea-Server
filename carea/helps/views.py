@@ -1,12 +1,16 @@
-from django.shortcuts import render
 import googlemaps
 import json
+
+from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.conf import settings
+
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.shortcuts import get_object_or_404
+
 from .serializers import HelpSerializer, MainHelpSerializer, DetailHelpSerializer
 from .models import Help
+from chats.models import ChatRoom
 
 def stt(request):
     return render(request, 'stt.html')
@@ -29,11 +33,11 @@ class Map():
         return help_info
 
 
-@api_view(['GET','POST'])
+@api_view(['GET', 'POST'])
 def maps(request):
     help_instance = Map()
 
-    if(request.method=='GET'):
+    if (request.method == 'GET'):
         help_list = help_instance.view_helps()
         helps_serializer = MainHelpSerializer(help_list, many=True)
 
@@ -51,14 +55,14 @@ def maps(request):
             }, status=404)
 
 
-    elif(request.method=='POST'):
+    elif (request.method == 'POST'):
         # 헤더에서 받은 토큰으로 유저 불러오기
         user = request.user
         # 주소값을 받아서 위도 경도로 변환
         lat, lng = help_instance.geocode(request.data['location'])
         write_serializer = HelpSerializer(data=request.data)
 
-        if(write_serializer.is_valid()):
+        if (write_serializer.is_valid()):
             write_serializer.save(user=user, latitude=lat, longitude=lng)
             return Response({
                 "isSuccess" : True,
@@ -66,7 +70,7 @@ def maps(request):
                 "result" : write_serializer.data
             }, status=201)
 
-        else :
+        else:
             return Response({
                 "isSuccess" : False,
                 "message" : "요청글을 입력하세요."
@@ -76,7 +80,7 @@ def maps(request):
 @api_view(['GET'])
 def helps(request, help_id):
 
-    if(request.method == 'GET') :
+    if (request.method == 'GET'):
         help_instance = Map()
         help_info = help_instance.help_detail(help_id)
         help_serializer = DetailHelpSerializer(help_info)
@@ -93,3 +97,38 @@ def helps(request, help_id):
                 "isSuccess" : False,
                 "message" : "요청글을 찾을 수 없습니다."
             }, status=404)
+
+# 도움 요청자/제공자 판별
+@api_view(['GET'])
+def identify(request, room_id):
+
+    if (request.method == 'GET') :
+        # 헤더에서 받은 토큰으로 유저 불러오기
+        user = request.user
+
+        try:
+            # 채팅방 인스턴스 불러오기
+            room = ChatRoom.objects.get(id=room_id)
+        except Exception:
+            return Response({
+                "isSuccess": False,
+                "message": "채팅방을 찾을 수 없습니다.",
+            }, status=404)
+
+        if (user != room.helper) and (user.id != room.helped):
+            return Response({
+                "isSuccess": False,
+                "message": "채팅방 참여자가 아닙니다.",
+            }, status=403)
+
+        # 유저가 채팅방에서 어떤 역할인지 판단
+        if user.id == room.helped:
+            role = "seeker"
+        else:
+            role = "helper"
+
+        return Response({
+            "isSuccess": True,
+            "message": "요청에 성공하였습니다.",
+            "result": role
+        }, status=200)
