@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.maps, name="map"),
 
     # 상세 게시물
-    path('<int:help_id>', views.helps, name="help_post"),
+    path('<int:help_id>/', views.helps, name="help_post"),
 
     # 도움 요청자/제공자 판별
     path('<int:room_id>/identification', views.identify, name="identify_user"),
