@@ -132,3 +132,44 @@ def identify(request, room_id):
             "message": "요청에 성공하였습니다.",
             "result": role
         }, status=200)
+
+# 도움 인증 완료 시 경험치 증가
+@api_view(['PATCH'])
+def increase_points(request, room_id):
+
+    if (request.method == 'PATCH') :
+        # 헤더에서 받은 토큰으로 유저 불러오기
+        user = request.user
+
+        try:
+            # 채팅방 인스턴스 불러오기
+            room = ChatRoom.objects.get(id=room_id)
+        except Exception:
+            return Response({
+                "isSuccess": False,
+                "message": "채팅방을 찾을 수 없습니다.",
+            }, status=404)
+
+        if (user != room.helper) and (user.id != room.helped):
+            return Response({
+                "isSuccess": False,
+                "message": "채팅방 참여자가 아닙니다.",
+            }, status=403)
+
+        # 도움 요청자 +5, 도움 제공자 +10
+        if user.id == room.helped:
+            points = 5
+        else:
+            points = 10
+
+        user.point += points
+        user.save()
+
+        return Response({
+            "isSuccess": True,
+            "message": "요청에 성공하였습니다.",
+            "result": {
+                "increased_points": points,
+                "user_points": user.point,
+            }
+        }, status=200)
