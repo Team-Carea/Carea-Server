@@ -61,7 +61,7 @@ class HelpConsumer(AsyncWebsocketConsumer):
                 print(await self.check_helper(room))
                 if not await self.check_helper(room):
                     print('도움 제공자만 인증할 문장을 보낼 수 있습니다.')
-                    await self.send(text_data=json.dumps({'isSuccess': False, 'message': '도움 요청자만 인증할 문장을 말할 수 있습니다.'}))
+                    await self.send(text_data=json.dumps({'isSuccess': False, 'message': '도움 제공자만 인증할 문장을 보낼 수 있습니다.'}))
                     await self.close()
 
                 content = json.loads(text_data)
