@@ -55,22 +55,17 @@ class HelpConsumer(AsyncWebsocketConsumer):
             # 채팅방 가져오기
             room = await self.get_room(self.room_id)
 
-            # 도움 제공자의 랜덤 생성한 문장인 경우
-            # DB에 인증 문장 저장하고, 그룹에 문장 보내기
             if text_data:
-                print(await self.check_helper(room))
-                if not await self.check_helper(room):
-                    print('도움 제공자만 인증할 문장을 보낼 수 있습니다.')
-                    await self.send(text_data=json.dumps({'isSuccess': False, 'message': '도움 제공자만 인증할 문장을 보낼 수 있습니다.'}))
-                    await self.close()
-
                 content = json.loads(text_data)
 
                 # 수신된 JSON에서 필요한 정보 추출
                 sentence = content['message']
 
-                # 수신된 인증 문장 데이터베이스에 저장
-                await self.save_sentence(room, sentence)
+                # 도움 제공자의 랜덤 생성한 문장인 경우, DB에 인증 문장 저장
+                # 도움 요청자의 인증 완료 문장인 경우, 문장 보내기만 진행
+                if await self.check_helper(room):
+                    # 수신된 인증 문장 데이터베이스에 저장
+                    await self.save_sentence(room, sentence)
 
                 # Send message to room group
                 await self.channel_layer.group_send(
@@ -80,8 +75,9 @@ class HelpConsumer(AsyncWebsocketConsumer):
                     }
                 )
 
-            # 도움 요청자의 바이너리 음성 파일인 경우
-            # STT 써서 랜덤 문장 비교 후 DB에 포인트 업데이트, 결과 프론트로 보내기
+            # 플러터에서 STT 수행하는 것으로 변경
+            # (도움 요청자의 바이너리 음성 파일인 경우
+            # STT 써서 랜덤 문장 비교 후 DB에 포인트 업데이트, 결과 프론트로 보내기)
             elif bytes_data:
                 if not await self.check_helped(room):
                     print('도움 요청자만 인증할 문장을 말할 수 있습니다.')
