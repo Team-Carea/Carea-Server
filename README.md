@@ -32,6 +32,7 @@ This is why we conceived **"Carea"**.
 <br>
 
 ### Backend
+#### [Local]
 Before you start, you have to install Docker. <br><br>
 
 `git remote add https://github.com/Team-Carea/Carea-Server.git`
@@ -41,7 +42,10 @@ Before you start, you have to install Docker. <br><br>
 `docker compose up -d --build`
 
 - If you run this command, the containers of Django and Redis will start. <br>
-- Then, you can connect with this URL, http://localhost:8000.
+- Then, you can connect with this URL, http://localhost:8000. <br><br>
+
+#### [Deployment]
+Or, you can just connect with this URL, https://carea.app.
 
 <br>
 
