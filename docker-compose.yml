@@ -1,5 +1,11 @@
 version: '3'
 services:
+  redis:
+    image: redis:6
+    container_name: redis
+    ports:
+      - 6379:6379
+
   web:
     image: django:5.0.1
     container_name: django
@@ -8,4 +14,6 @@ services:
       - .:/app
     ports:
       - 8000:8000
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=carea-project-5ba12d932822.json
     command: sh -c "python ./carea/manage.py runserver 0.0.0.0:8000"

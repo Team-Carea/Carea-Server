@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket File Upload</title>
+</head>
+<body>
+    <!-- 첫 번째 버튼: 텍스트 메시지 전송 -->
+    <input type="text" id="textMessage" placeholder="Enter text message">
+    <button onclick="sendTextMessage(1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NDI4MDM2LCJpYXQiOjE3MDg0MjA4MzYsImp0aSI6IjJmYzgzOTVlYzY5YTQyNzdiYmM4NTM0MzA3MTc0MWY3IiwidXNlcl9pZCI6M30.6QDL2s4z7uhaMqkXYS6Qrk59r_YMDu0B3_INzCZn2kc')">Send Text Message</button>
+
+    <hr>
+
+    <!-- 두 번째 버튼: WAV 파일 선택 및 전송 -->
+    <input type="file" id="fileInput" accept=".wav">
+    <button onclick="sendBinaryFile(1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA4NDMzNTEzLCJpYXQiOjE3MDg0MTcyMDUsImp0aSI6ImRmNTlhZjc0ZDYzYTQ5NDI4YzRjYzc1ODQ3MGI4Y2VlIiwidXNlcl9pZCI6Mn0.Xcc9mOT_-S6_iDVLmTwci1bIo1la5ai3YnelxAlGIps')">Send Binary File</button>
+
+    <script>
+        const textMessageInput = document.getElementById('textMessage');
+        const fileInput = document.getElementById('fileInput');
+
+        async function sendTextMessage(room_id, currentToken) {
+            const textMessage = textMessageInput.value.trim();
+
+            if (textMessage !== '') {
+                // Establish WebSocket connection
+                const socket = new WebSocket(`ws://127.0.0.1:8000/ws/helps/stt/${room_id}?token=${currentToken}`);
+
+                socket.addEventListener('open', (event) => {
+                    // Send text message to the server
+                    socket.send(JSON.stringify({ type: 'text', message: textMessage }));
+                });
+
+                socket.addEventListener('message', (event) => {
+                    // Handle response from the server
+                    const data = JSON.parse(event.data)
+                    console.log('Server response:', data.message);
+                    socket.close();
+                });
+
+                socket.addEventListener('close', (event) => {
+                    // Handle WebSocket connection close
+                    console.log('WebSocket closed:', event);
+                });
+
+                socket.addEventListener('error', (event) => {
+                    // Handle WebSocket error
+                    console.error('WebSocket error:', event);
+                });
+            } else {
+                console.error('Text message cannot be empty.');
+            }
+        }
+
+        async function sendBinaryFile(room_id, currentToken) {
+            const file = fileInput.files[0];
+
+            if (file) {
+                // Establish WebSocket connection
+                const socket = new WebSocket(`ws://127.0.0.1:8000/ws/helps/stt/${room_id}?token=${currentToken}`);
+
+                socket.addEventListener('open', async (event) => {
+                    // Read the binary file as ArrayBuffer
+                    const arrayBuffer = await file.arrayBuffer();
+                    const binaryData = new Uint8Array(arrayBuffer);
+
+                    // Send binary data to the server
+                    socket.send(binaryData);
+                });
+
+                socket.addEventListener('message', (event) => {
+                    // Handle response from the server
+                    const data = JSON.parse(event.data)
+                    console.log('Server response:', data.message);
+                    socket.close();
+                });
+
+                socket.addEventListener('close', (event) => {
+                    // Handle WebSocket connection close
+                    console.log('WebSocket closed:', event);
+                });
+
+                socket.addEventListener('error', (event) => {
+                    // Handle WebSocket error
+                    console.error('WebSocket error:', event);
+                });
+            } else {
+                console.error('No file selected.');
+            }
+        }
+    </script>
+</body>
+</html>
