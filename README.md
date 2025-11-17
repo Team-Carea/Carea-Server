@@ -57,20 +57,20 @@ Or, you can just connect with this URL, https://carea.app.
 <br>
 
 ## 📱**Feature Screenshots**
-<img width="1278" alt="Sign In & Up" src="https://github.com/Team-Carea/Carea/assets/93782168/6c091d2f-03c2-4096-b51e-63ae210ea058">
-<img width="1277" alt="App Introduction" src="https://github.com/Team-Carea/Carea/assets/93782168/8f05e6b7-5638-475e-911b-ef2a5a0b5ee9">
-<img width="1278" alt="Community" src="https://github.com/Team-Carea/Carea/assets/93782168/4fe62c62-743d-41e7-8da9-65a0d08f2acd">
-<img width="1279" alt="Find Help" src="https://github.com/Team-Carea/Carea/assets/93782168/c4cc24e5-3316-4ba2-8313-f1334feaf3b8">
-<img width="1275" alt="Start Chat" src="https://github.com/Team-Carea/Carea/assets/93782168/71d64051-02ae-4456-9905-bc5d08413e8b">
-<img width="1275" alt="Verify Help" src="https://github.com/Team-Carea/Carea/assets/93782168/a9feae66-4fff-4872-901e-b9e60a052322">
+<img width="700" alt="Sign In & Up" src="https://github.com/user-attachments/assets/9d346579-9109-409c-9899-d57bdbc08361" />
+<img width="700" alt="App Introduction" src="https://github.com/user-attachments/assets/6b497b00-01ea-4feb-982a-95edc3c46009" />
+<img width="700" alt="Community" src="https://github.com/user-attachments/assets/f004ea3c-683c-4a42-9c9f-55430057547a" />
+<img width="700" alt="Find Help" src="https://github.com/user-attachments/assets/556372dd-b219-4466-beb4-04d774ed80cf" />
+<img width="700" alt="Start Chat" src="https://github.com/user-attachments/assets/7fa299b5-abee-455e-adbc-b5cbc82dc29b" />
+<img width="700" alt="Verify Help" src="https://github.com/user-attachments/assets/eb8e38c1-e6bc-4673-a279-d0ec1b1393a6" />
 
-<br>
+<br><br>
 
 ## 👩‍💻 **Contributors**
 
 ### **Team Carea**
 
-|                 [신진영](https://github.com/Jjinyshin)                 |                 [한정현](https://github.com/hanjeonghyun)                 |                 [임지영](https://github.com/naneunimjee)                 |                 [조세영](https://github.com/ilu25)                 |
+|                 [신진영](https://github.com/Jinyshin)                 |                 [한정현](https://github.com/hanjeonghyun)                 |                 [임지영](https://github.com/naneunimjee)                 |                 [조세영](https://github.com/ilu25)                 |
 |:-------------------------------------------------------------------:|:----------------------------------------------------------------------:|:---------------------------------------------------------------------:|:---------------------------------------------------------------:|
-|<img width=400 src="https://avatars.githubusercontent.com/Jjinyshin">|<img width=400 src="https://avatars.githubusercontent.com/hanjeonghyun">|<img width=400 src="https://avatars.githubusercontent.com/naneunimjee">|<img width=400 src="https://avatars.githubusercontent.com/ilu25">|
+|<img width=400 src="https://avatars.githubusercontent.com/Jinyshin">|<img width=400 src="https://avatars.githubusercontent.com/hanjeonghyun">|<img width=400 src="https://avatars.githubusercontent.com/naneunimjee">|<img width=400 src="https://avatars.githubusercontent.com/ilu25">|
 |                              Frontend                               |                                Frontend                                |                                Backend                                |                             Backend                             |
